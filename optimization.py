@@ -30,7 +30,6 @@ def findIntersections(constraints):
     """
     Given a list of linear inequality constraints, return a list all
     intersection points.
-
     Input: A list of constraints. Each constraint has the form:
         ((a1, a2, ..., aN), b)
         where the N-dimensional point (x1, x2, ..., xN) is feasible
@@ -38,12 +37,10 @@ def findIntersections(constraints):
     Output: A list of N-dimensional points. Each point has the form:
         (x1, x2, ..., xN).
         If none of the constraint boundaries intersect with each other, return [].
-
     An intersection point is an N-dimensional point that satisfies the
     strict equality of N of the input constraints.
     This method must return the intersection points for all possible
     combinations of N constraints.
-
     """
     "*** YOUR CODE HERE ***"
     #first create the whole A and b(only one col) matrix with 
@@ -78,20 +75,15 @@ def findFeasibleIntersections(constraints):
     """
     Given a list of linear inequality constraints, return a list all
     feasible intersection points.
-
     Input: A list of constraints. Each constraint has the form:
         ((a1, a2, ..., aN), b).
         where the N-dimensional point (x1, x2, ..., xN) is feasible
         if a1*x1 + a2*x2 + ... + aN*xN <= b for all constraints.
-
     Output: A list of N-dimensional points. Each point has the form:
         (x1, x2, ..., xN).
-
         If none of the lines intersect with each other, return [].
         If none of the intersections are feasible, return [].
-
     You will want to take advantage of your findIntersections function.
-
     """
     "*** YOUR CODE HERE ***"
     res = []
@@ -126,27 +118,21 @@ def solveLP(constraints, cost):
     """
     Given a list of linear inequality constraints and a cost vector,
     find a feasible point that minimizes the objective.
-
     Input: A list of constraints. Each constraint has the form:
         ((a1, a2, ..., aN), b).
         where the N-dimensional point (x1, x2, ..., xN) is feasible
         if a1*x1 + a2*x2 + ... + aN*xN <= b for all constraints.
-
         A tuple of cost coefficients: (c1, c2, ..., cN) where
         [c1, c2, ..., cN]^T is the cost vector that helps the
         objective function as cost^T*x.
-
     Output: A tuple of an N-dimensional optimal point and the 
         corresponding objective value at that point.
         One N-demensional point (x1, x2, ..., xN) which yields
         minimum value for the objective function.
-
         Return None if there is no feasible solution.
         You may assume that if a solution exists, it will be bounded,
         i.e. not infinity.
-
     You can take advantage of your findFeasibleIntersections function.
-
     """
     "*** YOUR CODE HERE ***"
     #for each intersection in the list, add up a total and find the minimum
@@ -157,12 +143,12 @@ def solveLP(constraints, cost):
     minPoint = None
     for point in feasibleIntersections:
         cur_cost = np.dot(cost, point)
-        print(cur_cost, minCost)
+        #print(cur_cost, minCost)
         if (cur_cost < minCost):
-            print("smaller")
+            #print("smaller")
             minCost = cur_cost
             minPoint = point
-            print(minPoint)
+            #print(minPoint)
     return (minPoint, minCost)
 
 def wordProblemLP():
@@ -170,16 +156,13 @@ def wordProblemLP():
     Formulate the word problem from the write-up as a linear program.
     Use your implementation of solveLP to find the optimal point and
     objective function.
-
     Output: A tuple of optimal point and the corresponding objective
         value at that point.
         Specifically return:
             ((sunscreen_amount, tantrum_amount), maximal_utility)
-
         Return None if there is no feasible solution.
         You may assume that if a solution exists, it will be bounded,
         i.e. not infinity.
-
     """
     constraints = (((-1, 0), -20), ((0, -1), -15.5), ((2.5, 2.5), 100), ((0.5, 0.25), 50))
     cost = (-7, -4)
@@ -212,7 +195,7 @@ def solveIP(constraints, cost):
     "*** YOUR CODE HERE ***"
     #need a priority queue
     if solveLP(constraints, cost) == None:
-        return 
+        return
     queue = util.PriorityQueue()
     minPoint, minCost = solveLP(constraints, cost)
     queue.push((minPoint, minCost, constraints), minCost)
@@ -228,6 +211,7 @@ def solveIP(constraints, cost):
         for i in range(len(minPoint)):
             #print("entered for loop")
             if not (np.abs(minPoint[i] - round(minPoint[i])) < 1e-12): #type
+            #if not np.isclose(minPoint[i], minPoint[i], rel_tol=(1e-12), abs_tol=0.0):
                 not_int = i
                 break;
         if not_int == -1:
@@ -275,6 +259,7 @@ def solveIP(constraints, cost):
         
     return "infeasible"
 
+
 def wordProblemIP():
     """
     Formulate the word problem in the write-up as a linear program.
@@ -306,13 +291,13 @@ def wordProblemIP():
     cost = (12, 20, 4, 5, 2, 1)
     point, money = solveIP(constraints, cost)[0], solveIP(constraints, cost)[1]
     return (point, money)
+    
 
 def foodDistribution(truck_limit, W, C, T):
     """
     Given M food providers and N communities, return the integer
     number of units that each provider should send to each community
     to satisfy the constraints and minimize transportation cost.
-
     Input:
         truck_limit: Scalar value representing the weight limit for each truck
         W: A tuple of M values representing the weight of food per unit for each 
@@ -328,7 +313,6 @@ def foodDistribution(truck_limit, W, C, T):
               (tm,1, tm,2, ..., tm,n, ..., tmN),
               ...
               (tM,1, tM,2, ..., tM,n, ..., tMN) ]
-
     Output: A length-2 tuple of the optimal food amounts and the corresponding objective
             value at that point: (optimial_food, minimal_cost)
             The optimal food amounts should be a single (M*N)-dimensional tuple
@@ -339,19 +323,44 @@ def foodDistribution(truck_limit, W, C, T):
              fm,1, fm,2, ..., fm,n, ..., fmN,
              ...
              fM,1, fM,2, ..., fM,n, ..., fMN)
-
             Return None if there is no feasible solution.
             You may assume that if a solution exists, it will be bounded,
             i.e. not infinity.
-
     You can take advantage of your solveIP function.
-
     """
     M = len(W)
     N = len(C)
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    constraints = []
+    cost = []
+    for i in range(M):
+        for j in range(N):
+            row = [0]*(M*N)
+            row[i*N + j] = W[i]
+            row = tuple(row)
+            t = [(row, truck_limit)]
+            constraints = constraints + t
+    for i in range(M):
+        for j in range(N):
+            row = [0] * (M*N)
+            row[i*N + j] = -1
+            row = tuple(row)
+            t = [(row, 0)]
+            constraints = constraints + t
+    for j in range(N):
+        row = [0] * (M*N)
+        for i in range(M):
+            row[j+M*i] = -1
+        row = tuple(row)
+        t = [(row, (C[j]*-1))]
+        constraints  = constraints + t
+    for i in range(M):
+        temp = list(T[i])
+        cost = cost + temp
+    
+    point, money = solveIP(constraints, cost)[0], solveIP(constraints, cost)[1]
+    return (point, money)
 
 
 if __name__ == "__main__":
@@ -367,4 +376,3 @@ if __name__ == "__main__":
     print(solveIP(constraints, (3,5)))
     print()
     print(wordProblemIP())
-
