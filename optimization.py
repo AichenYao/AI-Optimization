@@ -280,19 +280,32 @@ def wordProblemIP():
     Formulate the word problem in the write-up as a linear program.
     Use your implementation of solveIP to find the optimal point and
     objective function.
-
     Output: A tuple of optimal point and the corresponding objective
         value at that point.
         Specifically return:
         ((f_DtoG, f_DtoS, f_EtoG, f_EtoS, f_UtoG, f_UtoS), minimal_cost)
-
         Return None if there is no feasible solution.
         You may assume that if a solution exists, it will be bounded,
         i.e. not infinity.
-
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    constraints = [ ((1.2, 0, 0, 0, 0, 0), 30), 
+                    ((0, 1.2, 0, 0, 0, 0), 30),
+                    ((0, 0, 1.3, 0, 0, 0), 30),
+                    ((0, 0, 0, 1.3, 0, 0), 30),
+                    ((0, 0, 0, 0, 1.1, 0), 30),
+                    ((0, 0, 0, 0, 0, 1.1), 30),
+                    ((-1, 0, -1, 0, -1, 0), -15),
+                    ((0, -1, 0, -1, 0, -1), -30),
+                    ((-1, 0, 0, 0, 0, 0), 0), 
+                    ((0, -1, 0, 0, 0, 0), 0),
+                    ((0, 0, -1, 0, 0, 0), 0),
+                    ((0, 0, 0, -1, 0, 0), 0),
+                    ((0, 0, 0, 0, -1, 0), 0),
+                    ((0, 0, 0, 0, 0, -1), 0),]
+    cost = (12, 20, 4, 5, 2, 1)
+    point, money = solveIP(constraints, cost)[0], solveIP(constraints, cost)[1]
+    return (point, money)
 
 def foodDistribution(truck_limit, W, C, T):
     """
