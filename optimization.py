@@ -193,30 +193,87 @@ def solveIP(constraints, cost):
     Given a list of linear inequality constraints and a cost vector,
     use the branch and bound algorithm to find a feasible point with
     interger values that minimizes the objective.
-
     Input: A list of constraints. Each constraint has the form:
         ((a1, a2, ..., aN), b).
         where the N-dimensional point (x1, x2, ..., xN) is feasible
         if a1*x1 + a2*x2 + ... + aN*xN <= b for all constraints.
-
         A tuple of cost coefficients: (c1, c2, ..., cN) where
         [c1, c2, ..., cN]^T is the cost vector that helps the
         objective function as cost^T*x.
-
     Output: A tuple of an N-dimensional optimal point and the 
         corresponding objective value at that point.
         One N-demensional point (x1, x2, ..., xN) which yields
         minimum value for the objective function.
-
         Return None if there is no feasible solution.
         You may assume that if a solution exists, it will be bounded,
         i.e. not infinity.
-
     You can take advantage of your solveLP function.
-
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #need a priority queue
+    if solveLP(constraints, cost) == None:
+        return "infeaisable"
+    queue = util.PriorityQueue()
+    minPoint, minCost = solveLP(constraints, cost)
+    queue.push((minPoint, minCost, constraints), minCost)
+    #(lpSolution, priority, constrains)
+    #(solution of solveLP, constrains), priority
+    while not (queue.isEmpty()):
+        #print("entered while loop")
+        candidate = queue.pop()
+        minPoint = candidate[0]
+        minCost = candidate[1]
+        constraints = candidate[2]
+        not_int = -1
+        for i in range(len(minPoint)):
+            #print("entered for loop")
+            if not (np.abs(minPoint[i] - round(minPoint[i])) < 1e-12): #type
+                not_int = i
+                break;
+        if not_int == -1:
+            return (minPoint, minCost)
+                #print("entered if")
+                #left and right A
+        #print(i)
+        low = math.floor(minPoint[i])
+        #print(low)
+        high = math.ceil(minPoint[i])
+        oldA = list(constraints[0])
+        #print(constraints)
+        lowArr = [0]*len(constraints[0][0])
+        highArr = [0]*len(constraints[0][0])
+        lowArr[i] = 1
+        highArr[i] = -1
+        lowA_tuple = tuple(lowArr)
+        highA_tuple = tuple(highArr)
+        #left and right b
+        oldb = list(constraints[1])
+        lowb = low
+        highb = -1*high
+        #new constraints
+        lowRow = [(lowA_tuple, lowb)]
+        highRow = [(highA_tuple, highb)]
+
+        lowConstraints = constraints + lowRow
+        #print(lowConstraints)
+        highConstraints = constraints + highRow
+        #new points and cost
+        #print(type(cost))
+        lowCan = solveLP(lowConstraints, cost)
+        highCan = solveLP(highConstraints, cost)
+        #print(lowCan)
+        if lowCan != None:
+            lowPoint = lowCan[0]
+            lowCost = lowCan[1]
+            queue.push((lowPoint, lowCost, lowConstraints), lowCost)
+
+        if highCan != None:
+            highPoint = highCan[0]
+            highCost = highCan[1]
+            queue.push((highPoint, highCost, highConstraints), highCost)
+        #push to queue
+        
+    return "infeasible"
 
 def wordProblemIP():
     """
