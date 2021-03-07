@@ -212,7 +212,7 @@ def solveIP(constraints, cost):
     "*** YOUR CODE HERE ***"
     #need a priority queue
     if solveLP(constraints, cost) == None:
-        return "infeaisable"
+        return 
     queue = util.PriorityQueue()
     minPoint, minCost = solveLP(constraints, cost)
     queue.push((minPoint, minCost, constraints), minCost)
